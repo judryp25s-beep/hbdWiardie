@@ -9,6 +9,3 @@ def start():
 @app.route('/quotes')
 def quotes():
 	return render_template('quote.html')
-	
-if __name__ == '__main__':
-	app.run(host='0.0.0.0', debug=True)
