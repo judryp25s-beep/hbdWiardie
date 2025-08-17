@@ -206,7 +206,9 @@ form.search{
   </section>
 </div>
 
-  </div>  <script>
+  </div>
+	<audio id="bg-music" src="{{ url_for('static', filename='audio/agrad.mp3') }}" loop></audio>
+
 // --- Données d'exemple (remplacez par votre source réelle si besoin)
 const DATA = {
   quotes: [
@@ -413,5 +415,21 @@ function doSearch(){
 
 document.getElementById('searchForm').addEventListener('submit', (e)=>{ e.preventDefault(); doSearch(); });
 initSelects();
+	  document.addEventListener("DOMContentLoaded", function() {
+            const audio = document.getElementById("bg-music");
+
+            // Essayer de jouer l'audio automatiquement
+            const playAudio = () => {
+                audio.play().catch(err => {
+                    console.log("Lecture automatique bloquée par le navigateur. Attente d'une interaction de l'utilisateur.");
+                });
+            };
+
+            // Essayer de lancer l'audio
+            playAudio();
+
+            // Certains navigateurs demandent une interaction utilisateur
+            document.body.addEventListener("click", playAudio, { once: true });
+        });
   </script></body>
 </html>
