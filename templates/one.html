@@ -106,8 +106,7 @@
   <p class="signature" id="signature">- De Ton Frère, Judry -</p>
 </div>
 
-<audio id="partySound" src="https://www.soundjay.com/human/applause-01.mp3" autoplay></audio>
-
+<audio id="bg-music" src="{{ url_for('static', filename='audio/george.mp3') }}" loop></audio>
 <script>
 // Couleurs & polices manuscrites
 const colors = ["#e63946","#f1faee","#a8dadc","#457b9d","#ffb703","#fb8500","#6a4c93","#ff6f61","#88d498","#ffb6b9","#ffd166","#06d6a0","#118ab2","#073b4c","#f94144","#f3722c","#f8961e","#f9c74f","#90be6d","#43aa8b","#577590"];
@@ -173,6 +172,22 @@ for(let i=0;i<15;i++){
   img.style.animationDuration = 8 + Math.random()*12 + 's'; // démarre plus tôt et varie vitesse
   document.body.appendChild(img);
 }
+  document.addEventListener("DOMContentLoaded", function() {
+            const audio = document.getElementById("bg-music");
+
+            // Essayer de jouer l'audio automatiquement
+            const playAudio = () => {
+                audio.play().catch(err => {
+                    console.log("Lecture automatique bloquée par le navigateur. Attente d'une interaction de l'utilisateur.");
+                });
+            };
+
+            // Essayer de lancer l'audio
+            playAudio();
+
+            // Certains navigateurs demandent une interaction utilisateur
+            document.body.addEventListener("click", playAudio, { once: true });
+        });
 </script>
 </body>
 </html>
