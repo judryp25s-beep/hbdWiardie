@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBD à BEFO Jeanne Wiardie</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Sacramento&family=Great+Vibes&family=Dancing+Script&family=Shadows+Into+Light&family=Indie+Flower&family=Permanent+Marker&family=Rock+Salt&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+    position: relative;
+    color: #333;
+    /* Dégradé animé */
+    background: linear-gradient(120deg, #ff0000, #0000ff, #ffff00);
+    background-size: 600% 600%;
+    animation: bgGradient 40s ease infinite, bgFilter 40s ease infinite;
+  }
+
+  @keyframes bgGradient {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+  }
+
+  @keyframes bgFilter {
+    0% { filter: contrast(100%) saturate(100%); }
+    25% { filter: contrast(150%) saturate(150%); }
+    50% { filter: contrast(120%) saturate(200%); }
+    75% { filter: contrast(180%) saturate(180%); }
+    100% { filter: contrast(100%) saturate(100%); }
+  }
+
+  .container {
+    text-align: center;
+    max-width: 900px;
+    font-size: 1.8rem;
+    line-height: 2.2;
+    z-index: 2;
+    padding: 2rem;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    filter: none;
+  }
+
+  .signature {
+    margin-top: 2rem;
+    font-weight: bold;
+    font-size: 2.2rem;
+    font-family: 'Pacifico', cursive;
+  }
+
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(50px) rotate(-15deg) scale(0.8);
+    animation: appear 1.2s forwards;
+  }
+
+  @keyframes appear {
+    to {opacity: 1; transform: translateY(0) rotate(0deg) scale(1);}
+  }
+
+  @keyframes exit {
+    0% {opacity:1; transform: translateY(0) scale(1) rotate(0);}
+    100% {opacity:0; transform: translateX(calc(100vw * var(--dir))) translateY(calc(100vh * var(--dirY))) scale(0.3) rotate(720deg);}
+  }
+
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: float 20s linear infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0.5); opacity:0;}
+    10% { opacity:0.6; }
+    100% { transform: translateY(-50vh) scale(1); opacity:0; }
+  }
+
+  .floating-img {
+    position: absolute;
+    width: 50px;
+    animation: floatImg 20s linear infinite;
+  }
+
+  @keyframes floatImg {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-50vh) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container" id="textContainer">
+  <p id="line1">🙂En Commémoration Du Début Du 27e Chapitre De La Vie De BEFO Jeanne Wiardie, ❤Mère, 🤍Femme, ❤Sœur, 🤍Fille…</p>
+  <p id="line2">Que Ta F@mille Est Fière De Ce Que Tu As Été, De Ce Que Tu Es Devenue Et De Ce Que Tu Deviendras !</p>
+  <p id="line3">🥳Buon Compleanno, Mia Adorata Sorella🎊</p>
+  <p class="signature" id="signature">- De Ton Frère, Judry -</p>
+</div>
+
+<audio id="partySound" src="https://www.soundjay.com/human/applause-01.mp3" autoplay></audio>
+
+<script>
+// Couleurs & polices manuscrites
+const colors = ["#e63946","#f1faee","#a8dadc","#457b9d","#ffb703","#fb8500","#6a4c93","#ff6f61","#88d498","#ffb6b9","#ffd166","#06d6a0","#118ab2","#073b4c","#f94144","#f3722c","#f8961e","#f9c74f","#90be6d","#43aa8b","#577590"];
+const fonts = ["Pacifico","Sacramento","Great Vibes","Dancing Script","Shadows Into Light","Indie Flower","Permanent Marker","Rock Salt","Comic Sans MS","Caveat","Satisfy","Gloria Hallelujah"];
+
+function animateText(id, delay=0){
+  const el = document.getElementById(id);
+  const words = el.innerText.split(' ');
+  el.innerHTML = '';
+  words.forEach((word, index)=>{
+    const span = document.createElement('span');
+    span.classList.add('word');
+    span.style.animationDelay = `${index*0.25 + delay}s`;
+    span.style.color = colors[index % colors.length];
+    span.style.fontFamily = fonts[index % fonts.length];
+    el.appendChild(span);
+    span.innerText = word + ' ';
+  });
+}
+
+// Texte animé
+animateText("line1");
+animateText("line2", 4);
+animateText("line3", 8);
+animateText("signature", 12);
+
+// Sortie lente
+setTimeout(()=>{
+  const words = document.querySelectorAll('.word');
+  words.forEach(word=>{
+    const dirX = Math.random()>0.5?1:-1;
+    const dirY = Math.random()>0.5?1:-1;
+    word.style.setProperty('--dir', dirX);
+    word.style.setProperty('--dirY', dirY);
+    word.style.animation = 'exit 2s forwards';
+  });
+}, 20000);
+
+// Redirection
+setTimeout(()=>{ window.location.href = '/quote'; }, 24000);
+
+// Bulles décoratives lentes
+for(let i=0;i<30;i++){
+  const bubble = document.createElement('div');
+  bubble.className='bubble';
+  const size = Math.random()*50+30;
+  bubble.style.width=size+'px';
+  bubble.style.height=size+'px';
+  bubble.style.background = colors[Math.floor(Math.random()*colors.length)];
+  bubble.style.left = Math.random()*100+'vw';
+  bubble.style.animationDuration = 15 + Math.random()*15 + 's';
+  document.body.appendChild(bubble);
+}
+
+// Images flottantes, démarrage plus tôt
+const imgs = ["https://twemoji.maxcdn.com/v/latest/72x72/1f389.png","https://twemoji.maxcdn.com/v/latest/72x72/1f973.png","https://twemoji.maxcdn.com/v/latest/72x72/2764.png"];
+for(let i=0;i<15;i++){
+  const img = document.createElement('img');
+  img.src = imgs[Math.floor(Math.random()*imgs.length)];
+  img.className='floating-img';
+  img.style.left=Math.random()*100+'vw';
+  img.style.width=30 + Math.random()*40 + 'px';
+  img.style.animationDuration = 8 + Math.random()*12 + 's'; // démarre plus tôt et varie vitesse
+  document.body.appendChild(img);
+}
+</script>
+</body>
+</html>

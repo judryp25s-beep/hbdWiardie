@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Citations</title>
+  <meta name="description" content="Page moderne avec onglets pour naviguer entre Auteurs, Catégories, Citation du jour et Recherche." />
+  <style>
+    :root{
+      --bg: #FF966E;          /* surface */
+      --bg-2: #11151a;        /* cards */
+      --txt: #e6edf3;         /* text */
+      --muted: #9aa4af;       /* muted text */
+      --pri: #2dd4bf;         /* primary */
+      --pri-2:#22c1ac;        /* primary hover */
+      --brd: #22303a;         /* borders */
+      --ring: #2dd4bf55;      /* focus ring */
+      --rad: 16px;            /* radius */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --bl:rgba(1, 1, 1, 0.7);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f6f7f9;
+        --bg-2:#ffffff;
+        --txt: #111827;
+        --muted:#6b7280;
+        --pri:#0ea5e9;
+        --pri-2:#0284c7;
+        --brd:#e5e7eb;
+        --ring:#0ea5e94d;
+        --bl:rgba(1, 1, 1, 0.3);
+      }
+    }*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 800px at 80% -10%, var(--pri) 0%, transparent 35%),
+              radial-gradient(900px 600px at -10% 110%, #38bdf8 0%, transparent 30%),
+              var(--bg);
+  color:var(--txt);
+  line-height:1.5;
+  overflow: hidden;
+}
+
+.container{ max-width:1100px; margin:40px auto; padding:0 20px; height:100%; }
+
+.shell{
+  background: var(--bl);
+  backdrop-filter: blur(10px);
+  border:1px solid var(--brd);
+  border-radius: calc(var(--rad) + 4px);
+  box-shadow: var(--shadow);
+  overflow: clip;
+  height: 90%;
+}
+
+select {border-radius: 10px; height: 30px}
+
+header.app-header{ padding:20px 22px; display:flex; gap:16px; align-items:center; justify-content:space-between; background: color-mix(in srgb, var(--bg-2) 86%, transparent 14%); border-bottom:1px solid var(--brd); height: 15%; }
+.brand{ font-weight:800; letter-spacing:.3px }
+.brand small{ color:var(--muted); font-weight:600 }
+
+/* Tabs (header) */
+.tabs{ display:flex; gap:8px; flex-wrap:wrap }
+.tabs button{
+  appearance:none; border:1px solid var(--brd); background:color-mix(in srgb, var(--bg-2) 84%, transparent 16%);
+  color:var(--txt); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; letter-spacing:.2px;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+}
+.tabs button:hover{ background:color-mix(in srgb, var(--bg-2) 92%, var(--pri) 8%) }
+.tabs button[aria-selected="true"]{ border-color: color-mix(in srgb, var(--pri) 40%, var(--brd)); background: color-mix(in srgb, var(--pri) 15%, var(--bg-2)); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--pri) 25%, transparent) }
+
+/* Panels */
+.panel{ display:none; padding:24px; animation: fade .25s ease}
+.panel.active {
+	display: flex;
+	flex-direction: column;
+	height: 85%;
+}
+.grid-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+@keyframes fade{ from{ opacity:0; transform: translateY(6px) } to{ opacity:1; transform:none } }
+
+/* Cards list */
+.grid{ display:grid; gap:16px }
+@media (min-width: 640px){ .grid{ grid-template-columns: repeat(2, minmax(0,1fr)) } }
+@media (min-width: 980px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)) } }
+
+.card{
+  background: var(--bg-2); border:1px solid var(--brd); border-radius: var(--rad); padding:16px 16px; box-shadow: var(--shadow);
+  display:flex; flex-direction:column; gap:6px; min-height:82px
+}
+.card h3{ margin:0; font-size:1.02rem }
+.card p{ margin:0; color:var(--muted); font-size:.92rem }
+
+.toolbar{ flex: 0 0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px }
+.toolbar input[type="search"],
+.toolbar select{
+  background: color-mix(in srgb, var(--bg-2) 88%, transparent 12%);
+  border:1px solid var(--brd); color:var(--txt); padding:10px 12px; border-radius: 12px; min-width: 180px;
+  outline: none; box-shadow: 0 0 0 0px transparent; transition: box-shadow .15s ease, border-color .15s ease
+}
+.toolbar input[type="search"]:focus,
+.toolbar select:focus{ border-color: var(--pri); box-shadow: 0 0 0 6px var(--ring) }
+
+.btn{ border:1px solid transparent; background: var(--pri); color:#0b0f12; font-weight:800; padding:10px 14px; border-radius:12px; cursor:pointer }
+.btn:hover{ background: var(--pri-2) }
+.btn.secondary{ background: transparent; color:var(--txt); border-color: var(--brd) }
+.btn.secondary:hover{ border-color: var(--pri) }
+
+/* Quote card */
+.quote-card{ display:grid; gap:14px; grid-template-columns: 1fr; align-items:start }
+@media (min-width:768px){ .quote-card{ grid-template-columns: 1fr 360px } }
+blockquote{
+  margin: 10px; padding:18px; border:1px dashed color-mix(in srgb, var(--pri) 35%, var(--brd)); border-radius: var(--rad);
+  background: color-mix(in srgb, var(--pri) 8%, var(--bg-2)); font-size:1.08rem
+  overflow-y: auto;
+}
+blockquote footer{ margin-top:10px; color:var(--muted) }
+
+form.search{
+  flex: 0 0 auto; display:grid; gap:14px; grid-template-columns: 1fr; max-width: 780px
+}
+@media (min-width:680px){ form.search{ grid-template-columns: 1fr 1fr auto } }
+
+.hint{ color:var(--muted); font-size:.92rem }
+.spacer{ flex: 0 0 auto; height:1px; background: var(--brd); margin:16px 0 }
+
+/* Accessibility helpers */
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="shell" role="application">
+      <header class="app-header">
+        <div class="brand" aria-label="Citations">
+          <span>Citations</span>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="Navigation par onglets">
+          <button role="tab" id="tab-today" aria-selected="true" aria-controls="panel-today">Du jour</button>
+          <button role="tab" id="tab-authors" aria-selected="false" aria-controls="panel-authors">Auteurs</button>
+          <button role="tab" id="tab-categories" aria-selected="false" aria-controls="panel-categories">Catégories</button>
+          <button role="tab" id="tab-search" aria-selected="false" aria-controls="panel-search">Recherche</button>
+        </nav>
+      </header><!-- AUTEURS -->
+  <section id="panel-authors" class="panel" role="tabpanel" aria-labelledby="tab-authors">
+    <div class="toolbar">
+      <input id="authorQuery" type="search" placeholder="Filtrer les auteurs…" aria-label="Filtrer les auteurs" />
+      <span class="hint">Saisissez pour filtrer.</span>
+    </div>
+    <div class="grid-container">
+    <div id="authorsGrid" class="grid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section id="panel-categories" class="panel" role="tabpanel" aria-labelledby="tab-categories">
+    <div class="toolbar">
+      <input id="categoryQuery" type="search" placeholder="Filtrer les catégories…" aria-label="Filtrer les catégories" />
+      <span class="hint">Saisissez pour filtrer.</span>
+    </div>
+    <div class="grid-container">
+    <div id="categoriesGrid" class="grid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- DU JOUR -->
+  <section id="panel-today" class="panel active" role="tabpanel" aria-labelledby="tab-today">
+    <div class="quote-card">
+      <div>
+        <h2 style="margin-top:0">Citation du jour</h2>
+        <blockquote id="quoteBox" cite="">
+          「「<p id="quoteText">La simplicité est la sophistication suprême.</p>」」
+          <footer>— <cite id="quoteAuthor">Leonardo da Vinci</cite> — <span id="quoteCategory" class="hint">(Créativité)</span></footer>
+        </blockquote>
+        <div class="toolbar">
+          <button class="btn" id="btnNext">Nouvelle citation</button>
+          <button class="btn secondary" id="btnCopy">Copier</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECHERCHE -->
+  <section id="panel-search" class="panel" role="tabpanel" aria-labelledby="tab-search">
+    <h2 style="flex: 0 0 auto; margin-top:0">Recherche multi-critères</h2>
+    <form id="searchForm" class="search" autocomplete="off">
+      <label class="sr-only" for="selCategory">Catégorie</label>
+      <select id="selCategory" name="category">
+        <option value="">Toutes les catégories</option>
+      </select>
+      <label class="sr-only" for="selAuthor">Auteur</label>
+      <select id="selAuthor" name="author">
+        <option value="">Tous les auteurs</option>
+      </select>
+      <button class="btn" type="submit">Rechercher</button>
+    </form>
+    <div class="spacer"></div>
+    <div class="grid-container">
+    <div id="results" class="grid" aria-live="polite"></div>
+    </div>
+  </section>
+</div>
+
+  </div>  <script>
+// --- Données d'exemple (remplacez par votre source réelle si besoin)
+const DATA = {
+  quotes: [
+    { text:"La simplicité est la sophistication suprême.", author:"Leonardo da Vinci", category:"Créativité" },
+    { text:"La vie, c’est comme une bicyclette, il faut avancer pour ne pas perdre l’équilibre.", author:"Albert Einstein", category:"Vie" },
+    { text:"Le courage n’est pas l’absence de peur, mais la capacité de la vaincre.", author:"Nelson Mandela", category:"Courage" },
+    { text:"On ne voit bien qu’avec le cœur. L’essentiel est invisible pour les yeux.", author:"Antoine de Saint‑Exupéry", category:"Sagesse" },
+    { text:"Rien n’est plus puissant qu’une idée dont l’heure est venue.", author:"Victor Hugo", category:"Créativité" },
+    { text:"Il n’y a pas de liberté sans responsabilité.", author:"Sénèque", category:"Liberté" },
+    { text:"Le temps découvert est du temps gagné pour soi.", author:"Virginia Woolf", category:"Temps" },
+    { text:"Ce n’est pas parce que les choses sont difficiles que nous n’osons pas, c’est parce que nous n’osons pas qu’elles sont difficiles.", author:"Sénèque", category:"Courage" },
+  // Français
+  { text:"La simplicité est la sophistication suprême.", author:"Leonardo da Vinci", category:"Créativité", language:"fr" },
+  { text:"Rien ne sert de courir, il faut partir à point.", author:"Jean de La Fontaine", category:"Sagesse", language:"fr" },
+  { text:"On ne voit bien qu’avec le cœur. L’essentiel est invisible pour les yeux.", author:"Antoine de Saint‑Exupéry", category:"Sagesse", language:"fr" },
+
+  // Malagasy
+  { text:"Ny tsy mahay mandray andraikitra, very ny vintana.", author:"Proverbe Malgache", category:"Responsabilité", language:"mg" },
+  { text:"Izay manao ny tsara, tsy maintsy hahazo valiny.", author:"Proverbe Malgache", category:"Justice", language:"mg" },
+  { text:"Ny fo madio no mahita ny marina.", author:"Proverbe Malgache", category:"Sagesse", language:"mg" },
+
+  // Anglais
+  { text:"The only limit to our realization of tomorrow is our doubts of today.", author:"Franklin D. Roosevelt", category:"Motivation", language:"en" },
+  { text:"Happiness is not something ready-made. It comes from your own actions.", author:"Dalai Lama", category:"Bonheur", language:"en" },
+  { text:"In the middle of difficulty lies opportunity.", author:"Albert Einstein", category:"Courage", language:"en" },
+
+  // Italien
+  { text:"Chi dorme non piglia pesci.", author:"Proverbe Italien", category:"Travail", language:"it" },
+  { text:"La vita è un sogno, svegliati e vivi.", author:"Proverbe Italien", category:"Vie", language:"it" },
+  { text:"L'essenziale è invisibile agli occhi.", author:"Antoine de Saint‑Exupéry", category:"Sagesse", language:"it" },
+  // Français
+  { text:"Il n’y a qu’une façon d’échouer, c’est d’abandonner avant d’avoir réussi.", author:"Georges Clémenceau", category:"Persévérance", language:"fr" },
+  { text:"On n’hérite pas de la terre de nos parents, on l’emprunte à nos enfants.", author:"Antoine de Saint‑Exupéry", category:"Responsabilité", language:"fr" },
+  { text:"L’art de la réussite consiste à savoir s’entourer des meilleurs.", author:"John Fitzgerald Kennedy", category:"Sagesse", language:"fr" },
+
+  // Malagasy
+  { text:"Ny fahendrena tsy hita maso, fa tsapain-tanana.", author:"Proverbe Malgache", category:"Sagesse", language:"mg" },
+  { text:"Ny fitiavana tsy misy fepetra, fa madio fo.", author:"Proverbe Malgache", category:"Amour", language:"mg" },
+  { text:"Aza atao an-katerena ny hafa, fa hiverina aminao.", author:"Proverbe Malgache", category:"Justice", language:"mg" },
+
+  // Anglais
+  { text:"Do not go where the path may lead, go instead where there is no path and leave a trail.", author:"Ralph Waldo Emerson", category:"Courage", language:"en" },
+  { text:"Success is not final, failure is not fatal: It is the courage to continue that counts.", author:"Winston Churchill", category:"Persévérance", language:"en" },
+  { text:"Education is the most powerful weapon which you can use to change the world.", author:"Nelson Mandela", category:"Savoir", language:"en" },
+
+  // Italien
+  { text:"Chi va piano va sano e va lontano.", author:"Proverbe Italien", category:"Patience", language:"it" },
+  { text:"Non si può avere la botte piena e la moglie ubriaca.", author:"Proverbe Italien", category:"Sagesse", language:"it" },
+  { text:"L’amore è come il vento, non puoi vederlo ma puoi sentirlo.", author:"Proverbe Italien", category:"Amour", language:"it" },
+  // Français – famille et enfants
+  { text:"La famille est le refuge où nos cœurs trouvent la paix.", author:"Proverbe français", category:"Famille", language:"fr" },
+  { text:"Élever une fille, c'est semer de l'amour pour le futur.", author:"Anonyme", category:"Enfant", language:"fr" },
+  { text:"Les enfants sont les messages que nous envoyons à un temps que nous ne verrons pas.", author:"Neil Postman (traduit)", category:"Enfant", language:"fr" },
+
+  // Malagasy – famille et enfants
+  { text:"Ny ankizy no fanilo mamiratra ho an’ny fianakaviana.", author:"Proverbe Malgache", category:"Enfant", language:"mg" },
+  { text:"Ny reny sy ny zanaka, tsy misy afa-tsy fitiavana.", author:"Proverbe Malgache", category:"Famille", language:"mg" },
+  { text:"Ny tovovavy no ho avy mamirapiratra amin'ny fianakaviana.", author:"Proverbe Malgache", category:"Fille", language:"mg" },
+
+  // Anglais – family and children
+  { text:"Family is not an important thing. It's everything.", author:"Michael J. Fox", category:"Famille", language:"en" },
+  { text:"A daughter may outgrow your lap, but she will never outgrow your heart.", author:"Anonyme", category:"Fille", language:"en" },
+  { text:"Children are the living messages we send to a time we will not see.", author:"Neil Postman", category:"Enfant", language:"en" },
+
+  // Italien – famiglia e figli
+  { text:"La famiglia è il luogo dove la vita inizia e l’amore non finisce mai.", author:"Proverbe Italien", category:"Famille", language:"it" },
+  { text:"Una figlia è un piccolo miracolo che rende grande il cuore.", author:"Anonyme", category:"Fille", language:"it" },
+  { text:"I bambini sono il tesoro più grande che una famiglia possa avere.", author:"Proverbe Italien", category:"Enfant", language:"it" }
+]
+};
+// --- Extraire dynamiquement auteurs et catégories
+const DATA_AUTHORS = Array.from(new Set(DATA.quotes.map(q => q.author))).sort();
+const DATA_CATEGORIES = Array.from(new Set(DATA.quotes.map(q => q.category))).sort();
+
+// --- Gestion des onglets
+const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab)));
+tabs.forEach(tab => tab.addEventListener('keydown', (e) => {
+  const i = tabs.indexOf(document.activeElement); if(i<0) return;
+  if(e.key==='ArrowRight'){e.preventDefault(); tabs[(i+1)%tabs.length].focus();}
+  if(e.key==='ArrowLeft'){e.preventDefault(); tabs[(i-1+tabs.length)%tabs.length].focus();}
+  if(e.key==='Home'){e.preventDefault(); tabs[0].focus();}
+  if(e.key==='End'){e.preventDefault(); tabs[tabs.length-1].focus();}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault(); activateTab(document.activeElement);}
+}));
+function activateTab(tab){
+  tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
+  panels.forEach(p=>p.classList.toggle('active', p.id===tab.getAttribute('aria-controls')));
+}
+
+// --- Rendu dynamiques listes
+const authorsGrid = document.getElementById('authorsGrid');
+const categoriesGrid = document.getElementById('categoriesGrid');
+function renderList(container, items, onClick){
+  container.innerHTML='';
+  items.forEach(it=>{
+    const card=document.createElement('article'); card.className='card';
+    const h3=document.createElement('h3'); h3.textContent=it; card.append(h3);
+    if(onClick){ card.style.cursor='pointer'; card.addEventListener('click',()=>onClick(it)); }
+    container.append(card);
+  });
+}
+
+// --- Filtrage rapide
+const authorQuery = document.getElementById('authorQuery');
+const categoryQuery = document.getElementById('categoryQuery');
+
+function applyAuthorFilter(){
+  const q = authorQuery.value.trim().toLowerCase();
+  const items = DATA_AUTHORS.filter(a=>a.toLowerCase().includes(q));
+  renderList(authorsGrid, items, (name)=>{
+    document.getElementById('selAuthor').value = name;
+    activateTab(document.getElementById('tab-search'));
+    doSearch();
+  });
+}
+function applyCategoryFilter(){
+  const q = categoryQuery.value.trim().toLowerCase();
+  const items = DATA_CATEGORIES.filter(c=>c.toLowerCase().includes(q));
+  renderList(categoriesGrid, items, (cat)=>{
+    document.getElementById('selCategory').value = cat;
+    activateTab(document.getElementById('tab-search'));
+    doSearch();
+  });
+}
+authorQuery.addEventListener('input', applyAuthorFilter);
+categoryQuery.addEventListener('input', applyCategoryFilter);
+
+// --- Initial render
+renderList(authorsGrid, DATA_AUTHORS, (name)=>{ document.getElementById('selAuthor').value=name; activateTab(document.getElementById('tab-search')); doSearch(); });
+renderList(categoriesGrid, DATA_CATEGORIES, (cat)=>{ document.getElementById('selCategory').value=cat; activateTab(document.getElementById('tab-search')); doSearch(); });
+
+// --- Citation du jour unique
+const quoteText = document.getElementById('quoteText');
+const quoteAuthor = document.getElementById('quoteAuthor');
+const quoteCategory = document.getElementById('quoteCategory');
+
+function getQuoteOfTheDay(){
+  const today = new Date();
+  const seed = today.getFullYear()*10000 + (today.getMonth()+1)*100 + today.getDate(); // YYYYMMDD
+  // simple pseudo-random basé sur le seed du jour
+  const index = seed % DATA.quotes.length;
+  return DATA.quotes[index];
+}
+
+function showQuoteOfTheDay(){
+  const q = getQuoteOfTheDay();
+  quoteText.textContent = q.text;
+  quoteAuthor.textContent = q.author;
+  quoteCategory.textContent = `(${q.category})`;
+  document.getElementById('quoteBox').setAttribute('cite', q.author);
+}
+
+// --- Boutons
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  const rand = DATA.quotes[Math.floor(Math.random()*DATA.quotes.length)];
+  quoteText.textContent = rand.text;
+  quoteAuthor.textContent = rand.author;
+  quoteCategory.textContent = `(${rand.category})`;
+  document.getElementById('quoteBox').setAttribute('cite', rand.author);
+});
+document.getElementById('btnCopy').addEventListener('click', async ()=>{
+  const content = `"${quoteText.textContent}" — ${quoteAuthor.textContent} ${quoteCategory.textContent}`;
+  try{ await navigator.clipboard.writeText(content); 
+    const btn=document.getElementById('btnCopy'); const original=btn.textContent; btn.textContent='Copié !';
+    setTimeout(()=>btn.textContent=original,1200);
+  } catch(e){ alert('Copie non autorisée par le navigateur.'); }
+});
+
+showQuoteOfTheDay();
+
+// --- Recherche multi-critères
+const selCategory = document.getElementById('selCategory');
+const selAuthor   = document.getElementById('selAuthor');
+const results     = document.getElementById('results');
+
+function initSelects(){
+  DATA_CATEGORIES.forEach(c=>{
+    const opt = document.createElement('option'); opt.value=c; opt.textContent=c; selCategory.append(opt);
+  });
+  DATA_AUTHORS.forEach(a=>{
+    const opt = document.createElement('option'); opt.value=a; opt.textContent=a; selAuthor.append(opt);
+  });
+}
+
+function doSearch(){
+  const c = selCategory.value;
+  const a = selAuthor.value;
+  const matched = DATA.quotes.filter(q=> (!c||q.category===c)&&(!a||q.author===a));
+  results.innerHTML='';
+  if(matched.length===0){
+    const empty=document.createElement('p'); empty.className='hint'; empty.textContent='Aucun résultat. Essayez avec moins de filtres.'; results.append(empty);
+    return;
+  }
+  matched.forEach(q=>{
+    const card=document.createElement('article'); card.className='card';
+    const h3=document.createElement('h3'); h3.textContent=q.author;
+    const p=document.createElement('p'); p.textContent=`« ${q.text} »`;
+    const t=document.createElement('p'); t.className='hint'; t.textContent=q.category;
+    card.append(h3,p,t); results.append(card);
+  });
+}
+
+document.getElementById('searchForm').addEventListener('submit', (e)=>{ e.preventDefault(); doSearch(); });
+initSelects();
+  </script></body>
+</html>
